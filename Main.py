@@ -25,17 +25,17 @@ def add_variable(key, value, variables):
     variables[key] = value
 
 
-def load_variable(name, variables, loaded_variables):
+def load_variable(name, variables, loaded_variables=None):
     if name not in variables:
         raise Exception(f"Unknown name of variable {name}.")
 
-    if loaded_variables[name] is False:
-        variables[name] = load_content(variables[name])
+    if loaded_variables is not None and loaded_variables[name] is False:
+        variables[name] = load_content(variables[name], variables, loaded_variables)
         loaded_variables[name] = True
     return variables[name]
 
 
-def load_content(value, variables, loaded_variables):
+def load_content(value, variables, loaded_variables=None):
     i = 0
     loading_variable = 0
     loading = [""]
@@ -64,6 +64,34 @@ def load_content(value, variables, loaded_variables):
     return loading[0]
 
 
+def make_directory(path, directory, variables, templates):
+    for name, value in directory.items():
+        name = load_content(name, variables)
+        # creating a file
+        if isinstance(value, str):
+            with open(os.path.join(path, name), "w", encoding="utf-8") as file:
+                file.write(load_content(value, variables))
+        # creating a directory
+        elif isinstance(value, dict):
+            if not os.path.exists(os.path.join(path, name)):
+                os.mkdir(os.path.join(path, name))
+            make_directory(os.path.join(path, name), value, variables, templates)
+        # creating a template
+        if isinstance(value, list):
+            if name not in templates:
+                raise Exception(f"Unknown template {name}.")
+            template = templates[name]
+            for args in value:
+                if isinstance(args, str):
+                    if len(template["args"]) != 1:
+                        raise Exception(f"Not enough arguments [{args}] for template {name}.")
+                    local_variables = {template["args"][0]: args}
+                else:
+                    if len(template["args"]) != len(args):
+                        raise Exception(f"Not enough arguments {args} for template {name}.")
+                    local_variables = {template["args"][i]: args[i] for i in range(len(args))}
+                make_directory(path, template["dir"], {**variables, **local_variables}, templates)
+
 def load_variables(config_dir, config):
     variables = deepcopy(config["variables"])
     for variableName, variableFile in config["variableFiles"].items():
@@ -71,12 +99,13 @@ def load_variables(config_dir, config):
         add_variable(variableName, read_file(path), variables)
 
     # TODO add script variables
-    print(variables)
 
     loaded_variables = {key: key not in config["variables"] for key in variables}
 
     for variable in variables:
         load_variable(variable, variables, loaded_variables)
+
+    return variables
 
 
 if len(sys.argv) < 3:
@@ -87,4 +116,5 @@ path = load_path(sys.argv[2])
 
 config = json.loads(read_file(os.path.join(config_dir, "config.json")))
 
-load_variables(config_dir, config)
+variables = load_variables(config_dir, config)
+make_directory(path, config["dir"], variables, config["templates"])
