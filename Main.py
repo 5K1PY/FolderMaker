@@ -10,7 +10,7 @@ def load_path(*paths):
     if os.path.exists(path):
         return path
     else:
-        raise Exception(f"Path {path} doesn't exist")
+        raise FileNotFoundError(f"Path {path} doesn't exist")
 
 
 def read_file(path):
@@ -21,13 +21,13 @@ def read_file(path):
 
 def add_variable(key, value, variables):
     if key in variables:
-        raise Exception(f"Duplicate key {key} in variables.")
+        raise ValueError(f"Duplicate key {key} in variables.")
     variables[key] = value
 
 
 def load_variable(name, variables, loaded_variables=None):
     if name not in variables:
-        raise Exception(f"Unknown name of variable {name}.")
+        raise ValueError(f"Unknown name of variable {name}.")
 
     if loaded_variables is not None and loaded_variables[name] is False:
         variables[name] = load_content(variables[name], variables, loaded_variables)
@@ -42,7 +42,7 @@ def load_content(value, variables, loaded_variables=None):
 
     while i < len(value):
         add = ""
-        if i > 0 and value[i-1] == "\\":
+        if i > 0 and value[i-1] == "\\" and (i == 1 or value[i-2] != "\\"):
             loading[-1] += value[i]
 
         elif value[i] == "{":
@@ -52,7 +52,7 @@ def load_content(value, variables, loaded_variables=None):
         elif value[i] == "}":
             loading_variable -= 1
             if loading_variable < 0:
-                raise Exception("'}' before '{' in " + value + ".")
+                raise ValueError("'}' before '{' in " + value + ".")
             loading[loading_variable] += load_variable(loading.pop(), variables, loaded_variables)
 
         else:
@@ -60,7 +60,7 @@ def load_content(value, variables, loaded_variables=None):
         i += 1
 
     if loading_variable > 0:
-        raise Exception("No matching parenthesis for '{' in " + value + ".")
+        raise ValueError("No matching parenthesis for '{' in " + value + ".")
     return loading[0]
 
 
@@ -79,7 +79,7 @@ def make_directory(path, directory, variables, templates):
         # creating a template
         if isinstance(value, list):
             if name not in templates:
-                raise Exception(f"Unknown template {name}.")
+                raise ValueError(f"Unknown template {name}.")
             template = templates[name]
             for args in value:
                 if isinstance(args, str):
@@ -91,6 +91,7 @@ def make_directory(path, directory, variables, templates):
                         raise Exception(f"Not enough arguments {args} for template {name}.")
                     local_variables = {template["args"][i]: args[i] for i in range(len(args))}
                 make_directory(path, template["dir"], {**variables, **local_variables}, templates)
+
 
 def load_variables(config_dir, config):
     variables = deepcopy(config["variables"])
