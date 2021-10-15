@@ -2,6 +2,7 @@ import re
 import sys
 import os
 import json
+import importlib
 from copy import copy, deepcopy
 
 
@@ -94,12 +95,16 @@ def make_directory(path, directory, variables, templates):
 
 
 def load_variables(config_dir, config):
-    variables = deepcopy(config["variables"])
-    for variableName, variableFile in config["variableFiles"].items():
-        path = load_path(config_dir, "fileVariables", variableFile)
-        add_variable(variableName, read_file(path), variables)
+    variables = {}
 
-    # TODO add script variables
+    if "variables" in config:
+        for variableName, variableValue in config["variables"]:
+            add_variable(variableName, variableValue, variables)
+
+    if "variableFiles" in config:
+        for variableName, variableFile in config["variableFiles"].items():
+            path = load_path(config_dir, "fileVariables", variableFile)
+            add_variable(variableName, read_file(path), variables)
 
     loaded_variables = {key: key not in config["variables"] for key in variables}
 
@@ -118,4 +123,13 @@ path = load_path(sys.argv[2])
 config = json.loads(read_file(os.path.join(config_dir, "config.json")))
 
 variables = load_variables(config_dir, config)
-make_directory(path, config["dir"], variables, config["templates"])
+
+if "dir" not in config:
+    raise Exception("Key \"dir\" missing in config.")
+
+if "templates" in config:
+    templates = config["templates"]
+else:
+    templates = {}
+
+make_directory(path, config["dir"], variables, templates)
