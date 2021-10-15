@@ -5,7 +5,6 @@ import json
 import importlib
 from copy import copy, deepcopy
 
-
 def load_path(*paths):
     path = os.path.join(*paths)
     if os.path.exists(path):
@@ -20,19 +19,40 @@ def read_file(path):
     return content
 
 
-def add_variable(key, value, variables):
+def add_variable(key, value, variables, loaded_variables, status="to load"):
     if key in variables:
         raise ValueError(f"Duplicate key {key} in variables.")
     variables[key] = value
+    loaded_variables[key] = status
 
 
 def load_variable(name, variables, loaded_variables=None):
     if name not in variables:
         raise ValueError(f"Unknown name of variable {name}.")
 
-    if loaded_variables is not None and loaded_variables[name] is False:
-        variables[name] = load_content(variables[name], variables, loaded_variables)
-        loaded_variables[name] = True
+    if loaded_variables is not None:
+        if loaded_variables[name] == "to load":
+            loaded_variables[name] = "loading"
+            if isinstance(variables[name], str):
+                # variable
+                variables[name] = load_content(variables[name], variables, loaded_variables)
+            elif isinstance(variables[name], dict):
+                # script variable
+                if "filename" not in variables[name]:
+                    raise Exception(f"Missing \"filename\" of script variable {name}.")
+                if "args" not in variables[name]:
+                    raise Exception(f"Missing \"args\" of script variable {name}.")
+                if "func" not in variables[name]:
+                    raise Exception(f"Missing \"func\" of script variable {name}.")
+
+                pythonfile = importlib.import_module(variables[name]["filename"])
+                for i in range(len(variables[name]["args"])):
+                    variables[name]["args"][i] = load_content(variables[name]["args"][i], variables, loaded_variables)
+                variables[name] = getattr(pythonfile, variables[name]["func"])(*variables[name]["args"])
+
+            loaded_variables[name] = "loaded"
+        elif loaded_variables[name] == "loading":
+            raise Exception(f"Cyclic variable usage (\"{name}\" requires itself for its loading).")
     return variables[name]
 
 
@@ -86,27 +106,34 @@ def make_directory(path, directory, variables, templates):
                 if isinstance(args, str):
                     if len(template["args"]) != 1:
                         raise Exception(f"Not enough arguments [{args}] for template {name}.")
-                    local_variables = {template["args"][0]: args}
+                    local_variables = {template["args"][0]: load_content(args, variables)}
                 else:
                     if len(template["args"]) != len(args):
                         raise Exception(f"Not enough arguments {args} for template {name}.")
-                    local_variables = {template["args"][i]: args[i] for i in range(len(args))}
+                    local_variables = {template["args"][i]: load_content(args[i], variables) for i in range(len(args))}
                 make_directory(path, template["dir"], {**variables, **local_variables}, templates)
 
 
-def load_variables(config_dir, config):
+def load_variables(config_dir, path, config):
     variables = {}
+    loaded_variables = {}
+
+    add_variable("\\configDir", config_dir, variables, loaded_variables, "loaded")
+    add_variable("\\path", path, variables, loaded_variables, "loaded")
 
     if "variables" in config:
-        for variableName, variableValue in config["variables"]:
-            add_variable(variableName, variableValue, variables)
+        for variableName, variableValue in config["variables"].items():
+            add_variable(variableName, variableValue, variables, loaded_variables)
 
     if "variableFiles" in config:
         for variableName, variableFile in config["variableFiles"].items():
             path = load_path(config_dir, "fileVariables", variableFile)
-            add_variable(variableName, read_file(path), variables)
+            add_variable(variableName, read_file(path), variables, loaded_variables, "loaded")
 
-    loaded_variables = {key: key not in config["variables"] for key in variables}
+    if "scriptVariables" in config:
+        sys.path.insert(1, os.path.join(config_dir, "scriptVariables"))
+        for variableName, scriptArgs in config["scriptVariables"].items():
+            add_variable(variableName, scriptArgs, variables, loaded_variables)
 
     for variable in variables:
         load_variable(variable, variables, loaded_variables)
@@ -122,7 +149,7 @@ path = load_path(sys.argv[2])
 
 config = json.loads(read_file(os.path.join(config_dir, "config.json")))
 
-variables = load_variables(config_dir, config)
+variables = load_variables(config_dir, path, config)
 
 if "dir" not in config:
     raise Exception("Key \"dir\" missing in config.")
