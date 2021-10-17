@@ -1,0 +1,48 @@
+{
+    "variables": {
+        "taskDirName": "Uloha",
+        "fileType": "tex",
+        "author": "Daniel Skýpala",
+        "fileContentBasic": "{startFile}{author}{endFileBasic}",
+        "fileContentSources": "{startFile}{author}{endFileSources}"
+    },
+    "fileVariables": {
+        "startFile": "startFile.txt",
+        "endFileBasic": "endFileBasic.txt",
+        "endFileSources": "endFileSources.txt"
+    },
+    "scriptVariables": {
+        "serie": {
+            "filename": "findLowestFree",
+            "func": "load",
+            "args": ["{\\path}", "Serie(\\d+)"]
+        }
+    },
+    "dir": {
+        "Serie{serie}": {
+            "taskBasic": ["1", "2", "3", "4", "5", "E", "S"],
+            "taskSources": ["P"]
+        }
+    },
+    "templates": {
+        "taskBasic": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskDirName}{taskName}": {
+                    "{taskName}.{fileType}":  "{fileContentBasic}",
+                    "images": {}
+                }
+            }
+        },
+        "taskSources": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskDirName}{taskName}": {
+                    "{taskName}.{fileType}":  "{fileContentSources}",
+                    "images": {},
+                    "sources.bib": ""
+                }
+            }
+        }
+    }
+}
