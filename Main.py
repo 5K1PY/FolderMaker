@@ -5,6 +5,7 @@ import json
 import importlib
 from copy import copy, deepcopy
 
+
 def load_path(*paths):
     path = os.path.join(*paths)
     if os.path.exists(path):
@@ -19,144 +20,155 @@ def read_file(path):
     return content
 
 
-def add_variable(key, value, variables, loaded_variables, status="to load"):
-    if key in variables:
-        raise ValueError(f"Duplicate key {key} in variables.")
-    variables[key] = value
-    loaded_variables[key] = status
+class FolderMaker:
+    def __init__(self, config_dir, path):
+        self.config_dir = load_path(config_dir)
+        self.path = load_path(path)
 
+        self.config = json.loads(read_file(os.path.join(config_dir, "config.json")))
 
-def load_variable(name, variables, loaded_variables=None):
-    if name not in variables:
-        raise ValueError(f"Unknown name of variable {name}.")
+        self.load_variables()
 
-    if loaded_variables is not None:
-        if loaded_variables[name] == "to load":
-            loaded_variables[name] = "loading"
-            if isinstance(variables[name], str):
-                # variable
-                variables[name] = load_content(variables[name], variables, loaded_variables)
-            elif isinstance(variables[name], dict):
-                # script variable
-                if "filename" not in variables[name]:
-                    raise Exception(f"Missing \"filename\" of script variable {name}.")
-                if "args" not in variables[name]:
-                    raise Exception(f"Missing \"args\" of script variable {name}.")
-                if "func" not in variables[name]:
-                    raise Exception(f"Missing \"func\" of script variable {name}.")
-
-                pythonfile = importlib.import_module(variables[name]["filename"])
-                for i in range(len(variables[name]["args"])):
-                    variables[name]["args"][i] = load_content(variables[name]["args"][i], variables, loaded_variables)
-                variables[name] = getattr(pythonfile, variables[name]["func"])(*variables[name]["args"])
-
-            loaded_variables[name] = "loaded"
-        elif loaded_variables[name] == "loading":
-            raise Exception(f"Cyclic variable usage (\"{name}\" requires itself for its loading).")
-    return variables[name]
-
-
-def load_content(value, variables, loaded_variables=None):
-    i = 0
-    loading_variable = 0
-    loading = [""]
-
-    while i < len(value):
-        add = ""
-        if i > 0 and value[i-1] == "\\" and (i == 1 or value[i-2] != "\\"):
-            loading[-1] += value[i]
-
-        elif value[i] == "{":
-            loading_variable += 1
-            loading.append("")
-
-        elif value[i] == "}":
-            loading_variable -= 1
-            if loading_variable < 0:
-                raise ValueError("'}' before '{' in " + value + ".")
-            loading[loading_variable] += load_variable(loading.pop(), variables, loaded_variables)
-
+        if "dir" not in self.config:
+            raise Exception("Key \"dir\" missing in config.")
+        if "templates" in self.config:
+            self.templates = self.config["templates"]
         else:
-            loading[-1] += value[i]
-        i += 1
+            self.templates = {}
 
-    if loading_variable > 0:
-        raise ValueError("No matching parenthesis for '{' in " + value + ".")
-    return loading[0]
+    def load_variables(self):
+        self.variables = {}
+        self.loaded_variables = {}
 
+        self.add_variable("\\configDir", self.config_dir, status="loaded")
+        self.add_variable("\\path", self.path, status="loaded")
 
-def make_directory(path, directory, variables, templates):
-    for name, value in directory.items():
-        name = load_content(name, variables)
-        # creating a file
-        if isinstance(value, str):
-            with open(os.path.join(path, name), "w", encoding="utf-8") as file:
-                file.write(load_content(value, variables))
-        # creating a directory
-        elif isinstance(value, dict):
-            if not os.path.exists(os.path.join(path, name)):
-                os.mkdir(os.path.join(path, name))
-            make_directory(os.path.join(path, name), value, variables, templates)
-        # creating a template
-        if isinstance(value, list):
-            if name not in templates:
-                raise ValueError(f"Unknown template {name}.")
-            template = templates[name]
-            for args in value:
-                if isinstance(args, str):
-                    if len(template["args"]) != 1:
-                        raise Exception(f"Not enough arguments [{args}] for template {name}.")
-                    local_variables = {template["args"][0]: load_content(args, variables)}
-                else:
-                    if len(template["args"]) != len(args):
-                        raise Exception(f"Not enough arguments {args} for template {name}.")
-                    local_variables = {template["args"][i]: load_content(args[i], variables) for i in range(len(args))}
-                make_directory(path, template["dir"], {**variables, **local_variables}, templates)
+        if "variables" in self.config:
+            for variableName, variableValue in self.config["variables"].items():
+                self.add_variable(variableName, variableValue)
 
+        if "fileVariables" in self.config:
+            for variableName, variableFile in self.config["fileVariables"].items():
+                variablePath = load_path(self.config_dir, "fileVariables", variableFile)
+                self.add_variable(variableName, read_file(variablePath), status="loaded")
 
-def load_variables(config_dir, path, config):
-    variables = {}
-    loaded_variables = {}
+        if "scriptVariables" in self.config:
+            sys.path.insert(1, os.path.join(self.config_dir, "scriptVariables"))
+            for variableName, scriptArgs in self.config["scriptVariables"].items():
+                self.add_variable(variableName, scriptArgs)
 
-    add_variable("\\configDir", config_dir, variables, loaded_variables, "loaded")
-    add_variable("\\path", path, variables, loaded_variables, "loaded")
+        for variable in self.variables:
+            self.load_variable(variable)
 
-    if "variables" in config:
-        for variableName, variableValue in config["variables"].items():
-            add_variable(variableName, variableValue, variables, loaded_variables)
+    def add_variable(self, key, value, status="to load"):
+        if key in self.variables:
+            raise ValueError(f"Duplicate key {key} in variables.")
+        self.variables[key] = value
+        self.loaded_variables[key] = status
 
-    if "variableFiles" in config:
-        for variableName, variableFile in config["variableFiles"].items():
-            path = load_path(config_dir, "fileVariables", variableFile)
-            add_variable(variableName, read_file(path), variables, loaded_variables, "loaded")
+    def load_variable(self, name):
+        if name not in self.variables:
+            raise ValueError(f"Unknown name of variable {name}.")
 
-    if "scriptVariables" in config:
-        sys.path.insert(1, os.path.join(config_dir, "scriptVariables"))
-        for variableName, scriptArgs in config["scriptVariables"].items():
-            add_variable(variableName, scriptArgs, variables, loaded_variables)
+        if name in self.loaded_variables and self.loaded_variables[name] != "loaded":
+            if self.loaded_variables[name] == "to load":
+                self.loaded_variables[name] = "loading"
 
-    for variable in variables:
-        load_variable(variable, variables, loaded_variables)
+                if isinstance(self.variables[name], str):
+                    # variable
+                    self.variables[name] = self.load_content(self.variables[name])
 
-    return variables
+                elif isinstance(self.variables[name], dict):
+                    # script variable
+                    if "filename" not in self.variables[name]:
+                        raise Exception(f"Missing \"filename\" of script variable {name}.")
+                    if "args" not in self.variables[name]:
+                        raise Exception(f"Missing \"args\" of script variable {name}.")
+                    if "func" not in self.variables[name]:
+                        raise Exception(f"Missing \"func\" of script variable {name}.")
+
+                    pythonfile = importlib.import_module(self.variables[name]["filename"])
+                    for i in range(len(self.variables[name]["args"])):
+                        self.variables[name]["args"][i] = self.load_content(self.variables[name]["args"][i])
+                    self.variables[name] = getattr(pythonfile, self.variables[name]["func"])(*self.variables[name]["args"])
+
+                self.loaded_variables[name] = "loaded"
+
+            elif self.loaded_variables[name] == "loading":
+                raise Exception(f"Cyclic variable usage (\"{name}\" requires itself for its loading).")
+
+        return self.variables[name]
+
+    def load_content(self, value):
+        i = 0
+        loading_variable = 0
+        loading = [""]
+
+        while i < len(value):
+            add = ""
+            if i > 0 and value[i-1] == "\\" and (i == 1 or value[i-2] != "\\"):
+                loading[-1] += value[i]
+
+            elif value[i] == "{":
+                loading_variable += 1
+                loading.append("")
+
+            elif value[i] == "}":
+                loading_variable -= 1
+                if loading_variable < 0:
+                    raise ValueError("'}' before '{' in " + value + ".")
+                loading[loading_variable] += self.load_variable(loading.pop())
+
+            else:
+                loading[-1] += value[i]
+            i += 1
+
+        if loading_variable > 0:
+            raise ValueError("No matching parenthesis for '{' in " + value + ".")
+        return loading[0]
+
+    def make_directory(self, path=None, directory=None):
+        if path is None:
+            path = self.path
+        if directory is None:
+            directory = self.config["dir"]
+
+        for name, value in directory.items():
+            name = self.load_content(name)
+            # creating a file
+            if isinstance(value, str):
+                with open(os.path.join(path, name), "w", encoding="utf-8") as file:
+                    file.write(self.load_content(value))
+
+            # creating a directory
+            elif isinstance(value, dict):
+                if not os.path.exists(os.path.join(path, name)):
+                    os.mkdir(os.path.join(path, name))
+                self.make_directory(path=os.path.join(path, name), directory=value)
+
+            # creating a template
+            if isinstance(value, list):
+                if name not in self.templates:
+                    raise ValueError(f"Unknown template {name}.")
+                template = self.templates[name]
+                for args in value:
+                    if isinstance(args, str):
+                        if len(template["args"]) != 1:
+                            raise Exception(f"Not enough arguments [{args}] for template {name}.")
+                        local_variables = {template["args"][0]: self.load_content(args)}
+                    else:
+                        if len(template["args"]) != len(args):
+                            raise Exception(f"Not enough arguments {args} for template {name}.")
+                        local_variables = {template["args"][i]: self.load_content(args[i]) for i in range(len(args))}
+
+                    saved_variables = self.variables
+                    self.variables = {**self.variables, **local_variables}
+                    self.make_directory(path=path, directory=template["dir"])
+                    self.variables = saved_variables
 
 
 if len(sys.argv) < 3:
     raise Exception("Not enough arguments.")
 
-config_dir = load_path(sys.argv[1])
-path = load_path(sys.argv[2])
-
-config = json.loads(read_file(os.path.join(config_dir, "config.json")))
-
-variables = load_variables(config_dir, path, config)
-
-if "dir" not in config:
-    raise Exception("Key \"dir\" missing in config.")
-
-if "templates" in config:
-    templates = config["templates"]
-else:
-    templates = {}
-
-make_directory(path, config["dir"], variables, templates)
+folder_maker = FolderMaker(sys.argv[1], sys.argv[2])
+folder_maker.make_directory()
