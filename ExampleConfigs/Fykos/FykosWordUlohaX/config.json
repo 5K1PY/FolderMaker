@@ -1,0 +1,28 @@
+{
+    "variables": {
+        "taskDirName": "Uloha",
+        "fileType": "docx"
+    },
+    "scriptVariables": {
+        "serie": {
+            "filename": "findLowestFree",
+            "func": "load",
+            "args": ["{\\path}", "Serie(\\d+)"]
+        }
+    },
+    "dir": {
+        "Serie{serie}": {
+            "task": ["1", "2", "3", "4", "5", "P", "E", "S"]
+        }
+    },
+    "templates": {
+        "task": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskDirName}{taskName}": {
+                    "{taskName}.{fileType}":  ""
+                }
+            }
+        }
+    }
+}
