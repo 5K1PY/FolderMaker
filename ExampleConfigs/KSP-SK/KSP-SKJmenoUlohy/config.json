@@ -1,0 +1,39 @@
+{
+    "variables": {
+        "level": "3",
+        "taskFileName": "Program",
+        "fileType": "cpp",
+
+        "url" : "https://www.ksp.sk/ulohy/"
+    },
+    "fileVariables": {
+        "fileContent": "fileContent.txt"
+    },
+    "scriptVariables": {
+        "kolo": {
+            "filename": "findLowestFree",
+            "func": "load",
+            "args": ["{\\path}", "(\\d+)\\. kolo"]
+        },
+        "taskNames": {
+            "filename": "getKSP-SKTasks",
+            "func": "load_suitable_tasks",
+            "args": ["{url}", "{level}"]
+        }
+    },
+    "dir": {
+        "{kolo}. kolo": {
+            "task": "${taskNames}"
+        }
+    },
+    "templates": {
+        "task": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "{taskFileName}.{fileType}":  "{fileContent}"
+                }
+            }
+        }
+    }
+}
