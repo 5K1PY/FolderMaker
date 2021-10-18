@@ -1,0 +1,15 @@
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+% zadání
+``''\\
+
+% řešení
+
+\bibliographystyle{plain}
+\bibliography{sources}
+
+\end{document}

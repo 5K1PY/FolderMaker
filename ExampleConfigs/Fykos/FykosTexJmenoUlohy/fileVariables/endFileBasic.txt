@@ -1,0 +1,12 @@
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+% zadání
+``''\\
+
+% řešení
+
+\end{document}

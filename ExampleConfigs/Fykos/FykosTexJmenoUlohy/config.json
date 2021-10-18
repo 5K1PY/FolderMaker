@@ -1,0 +1,60 @@
+{
+    "variables": {
+        "taskFileName": "Reseni",
+        "fileType": "tex",
+        "author": "Daniel Skýpala",
+
+        "url" : "https://fykos.cz/zadani",
+        "fileContentBasic": "{startFile}{author}{endFileBasic}",
+        "fileContentSources": "{startFile}{author}{endFileSources}"
+    },
+    "fileVariables": {
+        "startFile": "startFile.txt",
+        "endFileBasic": "endFileBasic.txt",
+        "endFileSources": "endFileSources.txt"
+    },
+    "scriptVariables": {
+        "serie": {
+            "filename": "findLowestFree",
+            "func": "load",
+            "args": ["{\\path}", "Serie(\\d+)"]
+        },
+        "taskBasicNames": {
+            "filename": "getFykosTasks",
+            "func": "load_filtered_tasks",
+            "args": ["{url}", ["1", "2", "3", "4", "5", "E", "S"]]
+        },
+        "taskSourcesNames": {
+            "filename": "getFykosTasks",
+            "func": "load_filtered_tasks",
+            "args": ["{url}", ["P"]]
+        }
+    },
+    "dir": {
+        "Serie{serie}": {
+            "taskBasic": "${taskBasicNames}",
+            "taskSources": "${taskSourcesNames}"
+        }
+    },
+    "templates": {
+        "taskBasic": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "{taskFileName}.{fileType}":  "{fileContentBasic}",
+                    "images": {}
+                }
+            }
+        },
+        "taskSources": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "{taskFileName}.{fileType}":  "{fileContentSources}",
+                    "images": {},
+                    "sources.bib": ""
+                }
+            }
+        }
+    }
+}

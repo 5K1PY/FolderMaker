@@ -1,0 +1,35 @@
+{
+    "variables": {
+        "taskFileName": "Reseni",
+        "fileType": "docx",
+
+        "url" : "https://fykos.cz/zadani"
+    },
+    "scriptVariables": {
+        "serie": {
+            "filename": "findLowestFree",
+            "func": "load",
+            "args": ["{\\path}", "Serie(\\d+)"]
+        },
+        "taskNames": {
+            "filename": "getFykosTasks",
+            "func": "load_all_tasks",
+            "args": ["{url}"]
+        }
+    },
+    "dir": {
+        "Serie{serie}": {
+            "task": "${taskNames}"
+        }
+    },
+    "templates": {
+        "task": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "{taskFileName}.{fileType}":  ""
+                }
+            }
+        }
+    }
+}

@@ -193,8 +193,7 @@ class FolderMaker:
                     self.make_directory(path=path, directory=template["dir"])
                     self.variables = saved_variables
 
-sys.argv.append(".\\ExampleConfigs\\Fykos\\FykosWordUlohaX\\")
-sys.argv.append(".")
+
 if len(sys.argv) < 3:
     raise Exception("Not enough arguments.")
 
