@@ -1,7 +1,8 @@
 {
     "variables": {
         "taskDirName": "Uloha",
-        "fileType": "docx"
+        "fileType": "docx",
+        "taskNames": ["1", "2", "3", "4", "5", "P", "E", "S"]
     },
     "scriptVariables": {
         "serie": {
@@ -12,7 +13,7 @@
     },
     "dir": {
         "Serie{serie}": {
-            "task": ["1", "2", "3", "4", "5", "P", "E", "S"]
+            "task": "${taskNames}"
         }
     },
     "templates": {

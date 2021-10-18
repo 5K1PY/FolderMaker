@@ -20,6 +20,10 @@ def read_file(path):
     return content
 
 
+def contains(characters, value):
+    return all([character in value for character in characters])
+
+
 class FolderMaker:
     def __init__(self, config_dir, path):
         self.config_dir = load_path(config_dir)
@@ -75,8 +79,12 @@ class FolderMaker:
                 self.loaded_variables[name] = "loading"
 
                 if isinstance(self.variables[name], str):
-                    # variable
+                    # string variable
                     self.variables[name] = self.load_content(self.variables[name])
+
+                elif isinstance(self.variables[name], list):
+                    # list variable
+                    self.variables[name] = [self.load_content(element) for element in self.variables[name]]
 
                 elif isinstance(self.variables[name], dict):
                     # script variable
@@ -100,14 +108,29 @@ class FolderMaker:
         return self.variables[name]
 
     def load_content(self, value):
-        i = 0
         loading_variable = 0
-        loading = [""]
+        if len(value) > 0 and value[0] == "$":
+            i = 1
+            loading = [[]]
+        else:
+            i = 0
+            loading = [""]
 
         while i < len(value):
             add = ""
             if i > 0 and value[i-1] == "\\" and (i == 1 or value[i-2] != "\\"):
                 loading[-1] += value[i]
+
+            elif value[0] == "$" and len(loading) == 1 and contains(value[i], " +"):
+                pass
+            elif value[0] == "$" and value[i] == "[":
+                loading_variable += 1
+                loading.append([])
+            elif value[0] == "$" and value[i] == "]":
+                loading_variable -= 1
+                if loading_variable < 0:
+                    raise ValueError("']' before '[' in " + value + ".")
+                loading[loading_variable] += [loading.pop()]
 
             elif value[i] == "{":
                 loading_variable += 1
@@ -136,7 +159,7 @@ class FolderMaker:
         for name, value in directory.items():
             name = self.load_content(name)
             # creating a file
-            if isinstance(value, str):
+            if isinstance(value, str) and (len(value) == 0 or value[0] != "$"):
                 with open(os.path.join(path, name), "w", encoding="utf-8") as file:
                     file.write(self.load_content(value))
 
@@ -147,10 +170,14 @@ class FolderMaker:
                 self.make_directory(path=os.path.join(path, name), directory=value)
 
             # creating a template
-            if isinstance(value, list):
+            elif isinstance(value, list) or (isinstance(value, str) and value[0] == "$"):
                 if name not in self.templates:
                     raise ValueError(f"Unknown template {name}.")
                 template = self.templates[name]
+
+                if (isinstance(value, str) and value[0] == "$"):
+                    value = self.load_content(value)
+
                 for args in value:
                     if isinstance(args, str):
                         if len(template["args"]) != 1:
@@ -166,7 +193,8 @@ class FolderMaker:
                     self.make_directory(path=path, directory=template["dir"])
                     self.variables = saved_variables
 
-
+sys.argv.append(".\\ExampleConfigs\\Fykos\\FykosWordUlohaX\\")
+sys.argv.append(".")
 if len(sys.argv) < 3:
     raise Exception("Not enough arguments.")
 

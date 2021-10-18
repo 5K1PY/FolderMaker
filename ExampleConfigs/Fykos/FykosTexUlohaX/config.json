@@ -3,6 +3,9 @@
         "taskDirName": "Uloha",
         "fileType": "tex",
         "author": "Daniel Skýpala",
+        "taskBasicNames": ["1", "2", "3", "4", "5", "E", "S"],
+        "taskSourcesNames": ["P"],
+
         "fileContentBasic": "{startFile}{author}{endFileBasic}",
         "fileContentSources": "{startFile}{author}{endFileSources}"
     },
@@ -20,8 +23,8 @@
     },
     "dir": {
         "Serie{serie}": {
-            "taskBasic": ["1", "2", "3", "4", "5", "E", "S"],
-            "taskSources": ["P"]
+            "taskBasic": "${taskBasicNames}",
+            "taskSources": "${taskSourcesNames}"
         }
     },
     "templates": {
