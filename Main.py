@@ -160,8 +160,11 @@ class FolderMaker:
             name = self.load_content(name)
             # creating a file
             if isinstance(value, str) and (len(value) == 0 or value[0] != "$"):
-                with open(os.path.join(path, name), "w", encoding="utf-8") as file:
-                    file.write(self.load_content(value))
+                if not os.path.exists(os.path.join(path, name)):
+                    with open(os.path.join(path, name), "w", encoding="utf-8") as file:
+                        file.write(self.load_content(value))
+                else:
+                    print(f"File {os.path.join(path, name)} already exists, creation skipped.")
 
             # creating a directory
             elif isinstance(value, dict):
