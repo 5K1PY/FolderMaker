@@ -1,5 +1,6 @@
 {
     "variables": {
+        "mainFolderName": "Serie",
         "taskFileName": "Reseni",
         "fileType": "docx",
 
@@ -9,7 +10,7 @@
         "serie": {
             "filename": "findLowestFree",
             "func": "load",
-            "args": ["{\\path}", "Serie(\\d+)"]
+            "args": ["{\\path}", "{mainFolderName}(\\d+)"]
         },
         "taskNames": {
             "filename": "getFykosTasks",
@@ -18,7 +19,7 @@
         }
     },
     "dir": {
-        "Serie{serie}": {
+        "{mainFolderName}{serie}": {
             "task": "${taskNames}"
         }
     },

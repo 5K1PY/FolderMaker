@@ -1,5 +1,6 @@
 {
     "variables": {
+        "mainFolderName": "Serie",
         "taskFileName": "Reseni",
         "fileType": "tex",
         "author": "Daniel Skýpala",
@@ -17,7 +18,7 @@
         "serie": {
             "filename": "findLowestFree",
             "func": "load",
-            "args": ["{\\path}", "Serie(\\d+)"]
+            "args": ["{\\path}", "{mainFolderName}(\\d+)"]
         },
         "taskBasicNames": {
             "filename": "getFykosTasks",
@@ -31,7 +32,7 @@
         }
     },
     "dir": {
-        "Serie{serie}": {
+        "{mainFolderName}{serie}": {
             "taskBasic": "${taskBasicNames}",
             "taskSources": "${taskSourcesNames}"
         }

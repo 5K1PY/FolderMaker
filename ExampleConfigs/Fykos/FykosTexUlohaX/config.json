@@ -1,5 +1,6 @@
 {
     "variables": {
+        "mainFolderName": "Serie",
         "taskDirName": "Uloha",
         "fileType": "tex",
         "author": "Daniel Skýpala",
@@ -18,11 +19,11 @@
         "serie": {
             "filename": "findLowestFree",
             "func": "load",
-            "args": ["{\\path}", "Serie(\\d+)"]
+            "args": ["{\\path}", "{mainFolderName}(\\d+)"]
         }
     },
     "dir": {
-        "Serie{serie}": {
+        "{mainFolderName}{serie}": {
             "taskBasic": "${taskBasicNames}",
             "taskSources": "${taskSourcesNames}"
         }

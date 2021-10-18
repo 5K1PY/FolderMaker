@@ -1,5 +1,6 @@
 {
     "variables": {
+        "mainFolderName": "Serie",
         "taskDirName": "Uloha",
         "fileType": "docx",
         "taskNames": ["1", "2", "3", "4", "5", "P", "E", "S"]
@@ -8,11 +9,11 @@
         "serie": {
             "filename": "findLowestFree",
             "func": "load",
-            "args": ["{\\path}", "Serie(\\d+)"]
+            "args": ["{\\path}", "{mainFolderName}(\\d+)"]
         }
     },
     "dir": {
-        "Serie{serie}": {
+        "{mainFolderName}{serie}": {
             "task": "${taskNames}"
         }
     },
