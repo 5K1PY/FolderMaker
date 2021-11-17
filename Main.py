@@ -168,6 +168,8 @@ class FolderMaker:
 
             # creating a directory
             elif isinstance(value, dict):
+                if "." in name:
+                    raise ValueError(f"Name of directory {name} contains '.'.")
                 if not os.path.exists(os.path.join(path, name)):
                     os.mkdir(os.path.join(path, name))
                 self.make_directory(path=os.path.join(path, name), directory=value)
