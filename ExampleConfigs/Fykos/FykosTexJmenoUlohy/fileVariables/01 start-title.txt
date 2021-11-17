@@ -5,5 +5,4 @@
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
 
-\title{}
-\author{
+\title{

@@ -5,14 +5,13 @@
         "fileType": "tex",
         "author": "Daniel Skýpala",
 
-        "url" : "https://fykos.cz/zadani",
-        "fileContentBasic": "{startFile}{author}{endFileBasic}",
-        "fileContentSources": "{startFile}{author}{endFileSources}"
+        "url" : "https://fykos.cz/zadani"
     },
     "fileVariables": {
-        "startFile": "startFile.txt",
-        "endFileBasic": "endFileBasic.txt",
-        "endFileSources": "endFileSources.txt"
+        "01": "01 start-title.txt",
+        "02": "02 title-author.txt",
+        "03": "03 author-end.txt",
+        "03s": "03 author-end (with sources).txt"
     },
     "scriptVariables": {
         "serie": {
@@ -42,7 +41,7 @@
             "args": ["taskName"],
             "dir": {
                 "{taskName}": {
-                    "{taskFileName}.{fileType}":  "{fileContentBasic}",
+                    "{taskFileName}.{fileType}":  "{01}{taskName}{02}{author}{03}",
                     "images": {}
                 }
             }
@@ -51,7 +50,7 @@
             "args": ["taskName"],
             "dir": {
                 "{taskName}": {
-                    "{taskFileName}.{fileType}":  "{fileContentSources}",
+                    "{taskFileName}.{fileType}":  "{01}{taskName}{02}{author}{03s}",
                     "images": {},
                     "sources.bib": ""
                 }
