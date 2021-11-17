@@ -4,22 +4,33 @@
         "taskDirName": "Uloha",
         "fileType": "tex",
         "author": "Daniel Skýpala",
-        "taskBasicNames": ["1", "2", "3", "4", "5", "E", "S"],
-        "taskSourcesNames": ["P"],
+        
+        "url" : "https://fykos.cz/zadani",
 
-        "fileContentBasic": "{startFile}{author}{endFileBasic}",
-        "fileContentSources": "{startFile}{author}{endFileSources}"
+        "taskBasicIds": ["1", "2", "3", "4", "5", "E", "S"],
+        "taskSourcesIds": ["P"]
     },
     "fileVariables": {
-        "startFile": "startFile.txt",
-        "endFileBasic": "endFileBasic.txt",
-        "endFileSources": "endFileSources.txt"
+        "01": "01 start-title.txt",
+        "02": "02 title-author.txt",
+        "03": "03 author-end.txt",
+        "03s": "03 author-end (with sources).txt"
     },
     "scriptVariables": {
         "serie": {
             "filename": "findLowestFree",
             "func": "load",
             "args": ["{\\path}", "{mainFolderName}(\\d+)"]
+        },
+        "taskBasicNames": {
+            "filename": "getFykosTasks",
+            "func": "load_filtered_tasks",
+            "args": ["{url}", "${taskBasicIds}"]
+        },
+        "taskSourcesNames": {
+            "filename": "getFykosTasks",
+            "func": "load_filtered_tasks",
+            "args": ["{url}", "${taskSourcesIds}"]
         }
     },
     "dir": {
@@ -30,19 +41,19 @@
     },
     "templates": {
         "taskBasic": {
-            "args": ["taskName"],
+            "args": ["folderName", "taskName"],
             "dir": {
-                "{taskDirName}{taskName}": {
-                    "{taskName}.{fileType}":  "{fileContentBasic}",
+                "{taskDirName}{folderName}": {
+                    "{taskName}.{fileType}":  "{01}{taskName}{02}{author}{03}",
                     "images": {}
                 }
             }
         },
         "taskSources": {
-            "args": ["taskName"],
+            "args": ["folderName", "taskName"],
             "dir": {
-                "{taskDirName}{taskName}": {
-                    "{taskName}.{fileType}":  "{fileContentSources}",
+                "{taskDirName}{folderName}": {
+                    "{taskName}.{fileType}":  "{01}{taskName}{02}{author}{03s}",
                     "images": {},
                     "sources.bib": ""
                 }

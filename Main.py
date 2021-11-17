@@ -183,12 +183,8 @@ class FolderMaker:
 
                 for args in value:
                     if isinstance(args, str):
-                        if len(template["args"]) != 1:
-                            raise Exception(f"Not enough arguments [{args}] for template {name}.")
                         local_variables = {template["args"][0]: self.load_content(args)}
                     else:
-                        if len(template["args"]) != len(args):
-                            raise Exception(f"Not enough arguments {args} for template {name}.")
                         local_variables = {template["args"][i]: self.load_content(args[i]) for i in range(len(args))}
 
                     saved_variables = self.variables
