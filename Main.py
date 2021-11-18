@@ -130,7 +130,14 @@ class FolderMaker:
                 loading_variable -= 1
                 if loading_variable < 0:
                     raise ValueError("']' before '[' in " + value + ".")
-                loading[loading_variable] += [loading.pop()]
+                loading[loading_variable] += loading.pop()
+            elif value[0] == "$" and value[i] == "'" or value[i] == '"':
+                if isinstance(loading[-1], list):
+                    loading_variable += 1
+                    loading.append("")
+                elif isinstance(loading[-1], str):
+                    loading_variable -= 1
+                    loading[loading_variable] += loading.pop()
 
             elif value[i] == "{":
                 loading_variable += 1
