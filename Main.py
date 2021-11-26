@@ -108,46 +108,64 @@ class FolderMaker:
         return self.variables[name]
 
     def load_content(self, value):
-        loading_variable = 0
         if len(value) > 0 and value[0] == "$":
+            loading_variable = -1
             i = 1
-            loading = [[]]
+            loading = []
+            add_to_list = []
+            loading_string = False
         else:
+            loading_variable = 0
             i = 0
             loading = [""]
 
         while i < len(value):
-            add = ""
             if i > 0 and value[i-1] == "\\" and (i == 1 or value[i-2] != "\\"):
                 loading[-1] += value[i]
 
-            elif value[0] == "$" and len(loading) == 1 and contains(value[i], " +"):
+            elif value[0] == "$" and loading_string is False and not contains(value[i], "[]\"'+,{}"):
                 pass
             elif value[0] == "$" and value[i] == "[":
                 loading_variable += 1
                 loading.append([])
-            elif value[0] == "$" and value[i] == "]":
+                add_to_list.append(False)
+            elif value[0] == "$" and contains(value[i], ("]", ",")):
                 loading_variable -= 1
                 if loading_variable < 0:
-                    raise ValueError("']' before '[' in " + value + ".")
-                loading[loading_variable] += loading.pop()
+                    raise Exception("']' before '[' in " + value + ".")
+                if add_to_list.pop():
+                    loading[loading_variable] += loading.pop()
+                else:
+                    loading[loading_variable].append(loading.pop())
+                    if value[i] == "]" and len(add_to_list) > 0 and add_to_list[-1] is True:
+                        add_to_list.pop()
+                        loading_variable -= 1
+                        if loading_variable < 0:
+                            raise Exception("']' before '[' in " + value + ".")
+                        loading[loading_variable] += loading.pop()
+
+                if value[i] == ",":
+                    add_to_list.append(False)
+
+            elif value[0] == "$" and value[i] == "+":
+                add_to_list.append(True)
+
             elif value[0] == "$" and value[i] == "'" or value[i] == '"':
                 if isinstance(loading[-1], list):
                     loading_variable += 1
                     loading.append("")
+                    loading_string = True
                 elif isinstance(loading[-1], str):
-                    loading_variable -= 1
-                    loading[loading_variable] += loading.pop()
+                    loading_string = False
 
             elif value[i] == "{":
                 loading_variable += 1
+                loading_string = True
                 loading.append("")
 
             elif value[i] == "}":
-                loading_variable -= 1
-                if loading_variable < 0:
-                    raise ValueError("'}' before '{' in " + value + ".")
-                loading[loading_variable] += self.load_variable(loading.pop())
+                loading_string = False
+                loading.append(deepcopy(self.load_variable(loading.pop())))
 
             else:
                 loading[-1] += value[i]
@@ -202,6 +220,8 @@ class FolderMaker:
                     self.variables = saved_variables
 
 
+sys.argv.append(".\\ExampleConfigs\\Test\\")
+sys.argv.append(".")
 if len(sys.argv) < 3:
     raise Exception("Not enough arguments.")
 
