@@ -39,7 +39,7 @@ Variable to string is evaluated when enclosed in **{}**. Consider variable `myVa
 
 ### Variable to list
 Varibles are evaluated to lists when first character of the string is `"$"`. Then the entire string is treated as the result is the list. List variables are evaluated and added together: \
-`myList` = ["1"] \
+`myList` = `["1"]` \
 `"${myList} + ["1", "2"]"` evalutes to `"["1", "1", "2"]"` \
 `"${myList} + ["1", {myList}]"` evalutes to `"["1", "1", ["1"]]"`
 
