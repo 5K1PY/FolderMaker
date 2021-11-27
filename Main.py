@@ -165,7 +165,11 @@ class FolderMaker:
 
             elif value[i] == "}":
                 loading_string = False
-                loading.append(deepcopy(self.load_variable(loading.pop())))
+                if value[0] == "$":
+                    loading.append(deepcopy(self.load_variable(loading.pop())))
+                else:
+                    loading_variable -= 1
+                    loading[loading_variable] += self.load_variable(loading.pop())
 
             else:
                 loading[-1] += value[i]
@@ -193,8 +197,8 @@ class FolderMaker:
 
             # creating a directory
             elif isinstance(value, dict):
-                if "." in name:
-                    raise ValueError(f"Name of directory {name} contains '.'.")
+                if ".." in name:
+                    raise ValueError(f"Name of directory {name} contains '..'.")
                 if not os.path.exists(os.path.join(path, name)):
                     os.mkdir(os.path.join(path, name))
                 self.make_directory(path=os.path.join(path, name), directory=value)
@@ -220,8 +224,6 @@ class FolderMaker:
                     self.variables = saved_variables
 
 
-sys.argv.append(".\\ExampleConfigs\\Test\\")
-sys.argv.append(".")
 if len(sys.argv) < 3:
     raise Exception("Not enough arguments.")
 
