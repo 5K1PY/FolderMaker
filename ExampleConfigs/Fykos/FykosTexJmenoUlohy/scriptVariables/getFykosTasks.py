@@ -12,8 +12,7 @@ def get_el(tree, xpath):
 def load(url):
     response = requests.get(url)
     if response.status_code != 200:
-        print(f"Something faied, request to URL '{url}' returned {response.status_code}")
-        return False
+        raise ConnectionError(f"Something faied, request to URL '{url}' returned {response.status_code}")
     soup = BeautifulSoup(response.content, "html.parser")
     names = []
     for headline in soup.find_all("h3", class_="task-headline"):
