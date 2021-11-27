@@ -39,8 +39,8 @@ Variable to string is evaluated when enclosed in **{}**. Consider variable `myVa
 
 ### Variable to list
 Varibles are evaluated to lists when first character of the string is `"$"`. Then the entire string is treated as the result is the list. List variables are evaluated and added together:
-`myList` = ["1"]
-`"${myList} + ["1", "2"]"` evalutes to `"["1", "1", "2"]"`
+`myList` = ["1"] \
+`"${myList} + ["1", "2"]"` evalutes to `"["1", "1", "2"]"` \
 `"${myList} + ["1", {myList}]"` evalutes to `"["1", "1", ["1"]]"`
 
 ### Variables
@@ -52,28 +52,32 @@ Variables can be three types:
 
 ### Basic variables
 Basic variables are included in `config.json` and their string form is automatically evaluated before file creation.
+
 Syntax:
-``"variables": \{
-    "variable1": "foo",
-    "variable2": "not {variable1}"
-\}``
+1. `"variables": {`
+2. `    "variable1": "foo",`
+3. `    "variable2": "not {variable1}"`
+4. `}`
 ### File variables
 File variables are loaded from `./fileVariables` folder. This option is designed in order to reduce `config.json` text with limited functionality. Beware: File variables are **not** evaluated!
+
 Syntax:
-``"fileVariables": \{
-    "variable": "file1.txt",
-\}``
+1. `"fileVariables": {`
+2. `    "variable": "file1.txt"`
+3. `}`
 
 ### Script variables
 Script variables are python programs, that are given thier arguments and variable contents are the results they return. Arguments of scripts are automatically evaluated, whilist their results are not.
+
 Syntax:
-``"scriptVariables": \{
-    "variable": \{
-        "filename": "GetVar", // name of python script
-        "func": "foo",  // function to call
-        "args": ["arg1", "{variable1}"]  // function arguments
-    \}
-\}``
+1. `"scriptVariables": {`
+2. `    "variable": {`
+3. `        "filename": "GetVar", // name of python script`
+4. `        "func": "foo",  // function to call`
+5. `        "args": ["arg1", "{variable1}"]  // function arguments`
+6. `    }`
+7. `}`
+
 Use script variables when you can't get something by normal varibles e.g. loading data from web or getting lowest available folder name
 
 ### Special variables
@@ -83,19 +87,21 @@ Special variables are not defined by the user, but are defined by the program. T
 
 ## Templates
 Templates are folder/file recipts to reduce lenght of `dir`. They are defined in `templates` dictionary. They have similar syntax to `dir` dictionary, but can have local variables, that are given as arguments, but can use global variables as well.
+
 Syntax:
-``"template1": {
-    "arguments": ["folderName", "fileName"],
-    "dir": {
-        "{folderName}": {
-            "{fileName}.{fileType}":  "example1"
-        }
-    }
-}``
+1. `"template1": {`
+2. `    "arguments": ["folderName", "fileName"],`
+3. `    "dir": {`
+4. `        "{folderName}": {`
+5. `            "{fileName}.{fileType}":  "example1"`
+6. `        }`
+7. `    }`
+8. `}`
+
 (Here fileType is a global variable)
-When using templates in `dir` dictionary use template name as key and list or string that evaluates to list as arguments:
-`"dir"`: {
-    "folder1": {
-        "template1": ["1", "{var1}"]
-    }
-}
+When using templates in `dir` dictionary use template name as key and list or string that evaluates to list as arguments: \
+1. `"dir"`: {`
+2. `    "folder1": {`
+3. `        "template1": ["1", "{var1}"]`
+4. `    }`
+5. `}`
