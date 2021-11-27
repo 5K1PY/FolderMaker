@@ -51,21 +51,21 @@ Variables can be three types:
  - [special](#special-variables)
 
 ### Basic variables
-Basic variables are included in `config.json` and their string form is automatically evaulated before file creation.
+Basic variables are included in `config.json` and their string form is automatically evaluated before file creation.
 Syntax:
 ``"variables": \{
     "variable1": "foo",
     "variable2": "not {variable1}"
 \}``
 ### File variables
-File variables are loaded from `./fileVariables` folder. This option is designed in order to reduce `config.json` text with limited functionality. Beware: File variables are **not** evaulated!
+File variables are loaded from `./fileVariables` folder. This option is designed in order to reduce `config.json` text with limited functionality. Beware: File variables are **not** evaluated!
 Syntax:
 ``"fileVariables": \{
     "variable": "file1.txt",
 \}``
 
 ### Script variables
-Script variables are python programs, that are given thier arguments and variable contents are the results they return. Arguments of scripts are automatically evaulated, whilist their results are not.
+Script variables are python programs, that are given thier arguments and variable contents are the results they return. Arguments of scripts are automatically evaluated, whilist their results are not.
 Syntax:
 ``"scriptVariables": \{
     "variable": \{
@@ -93,7 +93,7 @@ Syntax:
     }
 }``
 (Here fileType is a global variable)
-When using templates in `dir` dictionary use template name as key and list or string that evaulates to list as arguments:
+When using templates in `dir` dictionary use template name as key and list or string that evaluates to list as arguments:
 `"dir"`: {
     "folder1": {
         "template1": ["1", "{var1}"]
