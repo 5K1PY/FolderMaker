@@ -1,0 +1,38 @@
+{
+    "variables": {
+        "taskFileName": "Program",
+        "fileType": "cpp",
+
+        "url" : "https://fiks.fit.cvut.cz/ulohy/"
+    },
+    "fileVariables": {
+        "fileContent": "fileContent.txt"
+    },
+    "scriptVariables": {
+        "kolo": {
+            "filename": "findLowestFree",
+            "func": "load",
+            "args": ["{\\path}", "(\\d+)\\. kolo"]
+        },
+        "taskNames": {
+            "filename": "getFIKSTasks",
+            "func": "load_new_tasks",
+            "args": ["{url}"]
+        }
+    },
+    "dir": {
+        "{kolo}. kolo": {
+            "task": "${taskNames}"
+        }
+    },
+    "templates": {
+        "task": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "{taskFileName}.{fileType}":  "{fileContent}"
+                }
+            }
+        }
+    }
+}
