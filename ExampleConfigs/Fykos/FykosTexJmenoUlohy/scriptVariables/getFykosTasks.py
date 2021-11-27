@@ -1,6 +1,5 @@
 from functools import cache
 import requests
-import lxml.html
 from bs4 import BeautifulSoup
 
 
