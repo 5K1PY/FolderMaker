@@ -41,19 +41,19 @@
     },
     "templates": {
         "taskBasic": {
-            "args": ["folderName", "taskName"],
+            "args": ["shortName", "taskName"],
             "dir": {
-                "{taskDirName}{folderName}": {
-                    "{taskName}.{fileType}":  "{01}{taskName}{02}{author}{03}",
+                "{taskDirName}{shortName}": {
+                    "{shortName}.{fileType}":  "{01}{taskName}{02}{author}{03}",
                     "images": {}
                 }
             }
         },
         "taskSources": {
-            "args": ["folderName", "taskName"],
+            "args": ["shortName", "taskName"],
             "dir": {
-                "{taskDirName}{folderName}": {
-                    "{taskName}.{fileType}":  "{01}{taskName}{02}{author}{03s}",
+                "{taskDirName}{shortName}": {
+                    "{shortName}.{fileType}":  "{01}{taskName}{02}{author}{03s}",
                     "images": {},
                     "sources.bib": ""
                 }
