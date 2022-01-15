@@ -85,6 +85,17 @@ Special variables are not defined by the user, but are defined by the program. T
  - `"\\configDir"`: path to Config directory
  - `"\\path"`: path to `destination folder`, where folders and files are made
 
+## Global File and Script variables
+To reduce unneccessary duplication of files, it is possible to use files from `globalVariables` folder. To do so, add `"g\\"` before
+path to the file you would like to use, for example:
+1. `"fileVariables": {`
+2. `    "variable": "g\\folder\\file1.txt"`
+3. `}`
+Which loads form `\\globalVariables\\fileVariables\\folder\\file1.txt`.
+
+**Note:** Global script variables are not supported yet, but will be supported in later versions.
+
+
 ## Templates
 Templates are folder/file recipts to reduce lenght of `dir`. They are defined in `templates` dictionary. They have similar syntax to `dir` dictionary, but can have local variables, that are given as arguments, but can use global variables as well.
 

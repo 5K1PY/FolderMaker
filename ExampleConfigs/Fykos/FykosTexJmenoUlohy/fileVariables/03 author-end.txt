@@ -1,9 +1,0 @@
-}
-\date{}
-
-\begin{document}
-\maketitle
-
-% řešení
-
-\end{document}

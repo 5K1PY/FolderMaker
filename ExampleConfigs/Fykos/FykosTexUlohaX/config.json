@@ -11,10 +11,10 @@
         "taskSourcesIds": ["P"]
     },
     "fileVariables": {
-        "01": "01 start-title.txt",
-        "02": "02 title-author.txt",
-        "03": "03 author-end.txt",
-        "03s": "03 author-end (with sources).txt"
+        "01": "g\\Tex\\01 start-title.txt",
+        "02": "g\\Tex\\02 title-author.txt",
+        "03": "g\\Tex\\03 author-end.txt",
+        "03s": "g\\Tex\\03 author-end (with sources).txt"
     },
     "scriptVariables": {
         "serie": {

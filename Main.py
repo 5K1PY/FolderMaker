@@ -5,6 +5,8 @@ import json
 import importlib
 from copy import copy, deepcopy
 
+GLOBAL_VARS_FLAG = "g\\"
+
 
 def load_path(*paths):
     path = os.path.join(*paths)
@@ -24,10 +26,18 @@ def contains(characters, value):
     return all([character in value for character in characters])
 
 
+def to_global(name):
+    if name[:len(GLOBAL_VARS_FLAG)] != GLOBAL_VARS_FLAG:
+        return None
+    return name[len(GLOBAL_VARS_FLAG):]
+
+
 class FolderMaker:
     def __init__(self, config_dir, path):
         self.config_dir = load_path(config_dir)
         self.path = load_path(path)
+        # not checking wheter path exists is intentional - it may not be reqiured, otherwise it is checked later
+        self.global_vars_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "globalVariables")
 
         self.config = json.loads(read_file(os.path.join(config_dir, "config.json")))
 
@@ -53,7 +63,10 @@ class FolderMaker:
 
         if "fileVariables" in self.config:
             for variableName, variableFile in self.config["fileVariables"].items():
-                variablePath = load_path(self.config_dir, "fileVariables", variableFile)
+                if to_global(variableFile):
+                    variablePath = load_path(self.global_vars_dir, "fileVariables", to_global(variableFile))
+                else:
+                    variablePath = load_path(self.config_dir, "fileVariables", variableFile)
                 self.add_variable(variableName, read_file(variablePath), status="loaded")
 
         if "scriptVariables" in self.config:
@@ -222,7 +235,6 @@ class FolderMaker:
                     self.variables = {**self.variables, **local_variables}
                     self.make_directory(path=path, directory=template["dir"])
                     self.variables = saved_variables
-
 
 if len(sys.argv) < 3:
     raise Exception("Not enough arguments.")

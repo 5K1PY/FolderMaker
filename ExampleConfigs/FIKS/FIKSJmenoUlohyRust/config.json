@@ -6,9 +6,9 @@
         "url" : "https://fiks.fit.cvut.cz/ulohy/"
     },
     "fileVariables": {
-        "rust": "main.rs",
-        "cargo1": "Cargo1.toml",
-        "cargo2": "Cargo2.toml"
+        "rust": "g\\Rust\\main.rs",
+        "cargo1": "g\\Rust\\Cargo1.toml",
+        "cargo2": "g\\Rust\\Cargo2.toml"
     },
     "scriptVariables": {
         "kolo": {
