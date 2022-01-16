@@ -22,12 +22,20 @@ def load(url):
     return names
 
 
+def filter_new_tasks(tasks):
+    return list(filter(lambda x: not x[1], tasks))
+
+
+def ordered_tasks(tasks):
+    return list(map(lambda x: (x[0]+1, x[1][0]), enumerate(tasks)))
+
+
 def load_all_tasks(url):
-    return list(map(lambda x: f"{x[0]+1} {x[1][0]}", enumerate(load(url))))
+    return list(map(lambda x: f"{x[0]} {x[1]}", ordered_tasks(load(url))))
 
 
 def load_new_tasks(url):
-    return list(map(lambda x: f"{x[0]+1} {x[1][0]}", enumerate(filter(lambda x: not x[1], load(url)))))
+    return list(map(lambda x: f"{x[0]} {x[1]}", ordered_tasks(filter_new_tasks(load(url)))))
 
 
 if __name__ == "__main__":

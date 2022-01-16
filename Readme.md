@@ -93,7 +93,34 @@ path to the file you would like to use, for example:
 3. `}`
 Which loads form `\\globalVariables\\fileVariables\\folder\\file1.txt`.
 
-**Note:** Global script variables are not supported yet, but will be supported in later versions.
+For Script variables:
+1. `"scriptVariables": {`
+2. `    "variable": {`
+3. `        "filename": "g\\folder\\GetVar",`
+4. `        "func": "foo",`
+5. `        "args": ["arg1", "{variable1}"]`
+6. `    }`
+7. `}`
+Which uses script from `\\globalVariables\\scriptVariables\\folder\\GetVar.py`.
+
+**Warning:** If you have same name of script file in `scriptVariables` and one of the `globalVariables` folders (e. g. `getVar` and `g\\folder\\GetVar`) the one from `scriptVariables` will be used.
+
+### Global file variables overview
+Global file variables are divided into following folders:
+ - Cpp - C++ templates
+ - Py - Python templates
+ - Rust - Rust templates
+ - Tex - Tex templates
+
+### Global script variables overview
+Global file variables are divided into following folders:
+ - Utility - Various useful scripts
+   - findLowestFree - finds next free name for folder of given reg-ex
+   - nameTools - various tools for working with names of tasks
+ - GetTasks - These scripts load tasks from respective competition:
+   - FIKS
+   - Fykos
+   - KSP-SK
 
 
 ## Templates

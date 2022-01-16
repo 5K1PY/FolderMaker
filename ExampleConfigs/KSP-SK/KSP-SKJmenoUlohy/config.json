@@ -11,12 +11,12 @@
     },
     "scriptVariables": {
         "kolo": {
-            "filename": "findLowestFree",
+            "filename": "g\\Utility\\findNextFree",
             "func": "load",
             "args": ["{\\path}", "(\\d+)\\. kolo"]
         },
         "taskNames": {
-            "filename": "getKSP-SKTasks",
+            "filename": "g\\GetTasks\\KSP-SK",
             "func": "load_suitable_tasks",
             "args": ["{url}", "{level}"]
         }

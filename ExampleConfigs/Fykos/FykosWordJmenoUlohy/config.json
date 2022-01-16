@@ -8,12 +8,12 @@
     },
     "scriptVariables": {
         "serie": {
-            "filename": "findLowestFree",
+            "filename": "g\\Utility\\findNextFree",
             "func": "load",
             "args": ["{\\path}", "{mainFolderName}(\\d+)"]
         },
         "taskNames": {
-            "filename": "getFykosTasks",
+            "filename": "g\\GetTasks\\Fykos",
             "func": "load_all_tasks",
             "args": ["{url}"]
         }

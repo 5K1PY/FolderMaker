@@ -70,9 +70,21 @@ class FolderMaker:
                 self.add_variable(variableName, read_file(variablePath), status="loaded")
 
         if "scriptVariables" in self.config:
-            sys.path.insert(1, os.path.join(self.config_dir, "scriptVariables"))
+            global_scripts_dirs = set([])
+            local_scripts = False
             for variableName, scriptArgs in self.config["scriptVariables"].items():
+                if to_global(scriptArgs["filename"]):
+                    head, tail = os.path.split(to_global(scriptArgs["filename"]))
+                    global_scripts_dirs.add(head)
+                    scriptArgs["filename"] = tail
+                else:
+                    local_scripts = True
                 self.add_variable(variableName, scriptArgs)
+
+            if local_scripts:
+                sys.path.append(load_path(self.config_dir, "scriptVariables"))
+            for script_folder in global_scripts_dirs:
+                sys.path.append(load_path(self.global_vars_dir, "scriptVariables", script_folder))
 
         for variable in self.variables:
             self.load_variable(variable)
@@ -235,6 +247,7 @@ class FolderMaker:
                     self.variables = {**self.variables, **local_variables}
                     self.make_directory(path=path, directory=template["dir"])
                     self.variables = saved_variables
+
 
 if len(sys.argv) < 3:
     raise Exception("Not enough arguments.")

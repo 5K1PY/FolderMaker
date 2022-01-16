@@ -12,19 +12,24 @@
     },
     "scriptVariables": {
         "kolo": {
-            "filename": "findLowestFree",
+            "filename": "g\\Utility\\findNextFree",
             "func": "load",
             "args": ["{\\path}", "(\\d+)\\. kolo"]
         },
         "taskNames": {
-            "filename": "getFIKSTasks",
+            "filename": "g\\GetTasks\\FIKS",
             "func": "load_new_tasks",
             "args": ["{url}"]
+        },
+        "tasksAndPackageNames": {
+            "filename": "g\\Utility\\nameTools",
+            "func": "beautify_to_pair",
+            "args": ["${taskNames}"]
         }
     },
     "dir": {
         "{kolo}. kolo": {
-            "task": "${taskNames}"
+            "task": "${tasksAndPackageNames}"
         }
     },
     "templates": {

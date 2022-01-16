@@ -15,17 +15,17 @@
     },
     "scriptVariables": {
         "serie": {
-            "filename": "findLowestFree",
+            "filename": "g\\Utility\\findNextFree",
             "func": "load",
             "args": ["{\\path}", "{mainFolderName}(\\d+)"]
         },
         "taskBasicNames": {
-            "filename": "getFykosTasks",
+            "filename": "g\\GetTasks\\Fykos",
             "func": "load_filtered_tasks",
             "args": ["{url}", ["1", "2", "3", "4", "5", "E", "S"]]
         },
         "taskSourcesNames": {
-            "filename": "getFykosTasks",
+            "filename": "g\\GetTasks\\Fykos",
             "func": "load_filtered_tasks",
             "args": ["{url}", ["P"]]
         }

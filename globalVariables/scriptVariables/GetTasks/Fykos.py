@@ -27,6 +27,14 @@ def load_filtered_tasks(url, suitable):
     return list(filter(lambda x: x.split(".")[0] in suitable, load(url)))
 
 
+def load_all_tasks_with_codes(url):
+    return list(map(lambda x: (x.split(".")[0], x), load(url)))
+
+
+def load_filtered_tasks_with_codes(url, suitable):
+    return list(filter(lambda x: x[0] in suitable, load_all_tasks_with_codes(url)))
+
+
 if __name__ == "__main__":
     url = "https://fykos.cz/zadani"
     print(load_all_tasks(url))

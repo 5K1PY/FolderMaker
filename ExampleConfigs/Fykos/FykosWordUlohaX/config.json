@@ -7,7 +7,7 @@
     },
     "scriptVariables": {
         "serie": {
-            "filename": "findLowestFree",
+            "filename": "g\\Utility\\findNextFree",
             "func": "load",
             "args": ["{\\path}", "{mainFolderName}(\\d+)"]
         }
