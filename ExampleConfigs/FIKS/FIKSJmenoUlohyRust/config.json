@@ -1,14 +1,22 @@
 {
     "variables": {
+        "author": "Insert your name here.",
+
         "taskFileName": "main",
         "fileType": "rs",
+        "descriptionFileName": "Popis",
+        "descriptionFileType": "tex",
 
         "url" : "https://fiks.fit.cvut.cz/ulohy/"
     },
     "fileVariables": {
         "rust": "g\\Rust\\main.rs",
         "cargo1": "g\\Rust\\Cargo1.toml",
-        "cargo2": "g\\Rust\\Cargo2.toml"
+        "cargo2": "g\\Rust\\Cargo2.toml",
+
+        "tex01": "g\\Tex\\01 start-title.txt",
+        "tex02": "g\\Tex\\02 title-author.txt",
+        "tex03": "g\\Tex\\03 author-end.txt"
     },
     "scriptVariables": {
         "kolo": {
@@ -16,32 +24,79 @@
             "func": "load",
             "args": ["{\\path}", "(\\d+)\\. kolo"]
         },
-        "taskNames": {
+        "taskNamesPractical": {
             "filename": "g\\GetTasks\\FIKS",
-            "func": "load_new_tasks",
-            "args": ["{url}"]
+            "func": "load_new_tasks_categorized",
+            "args": ["{url}", "practical"]
         },
-        "tasksAndPackageNames": {
+        "taskNamesMixed": {
+            "filename": "g\\GetTasks\\FIKS",
+            "func": "load_new_tasks_categorized",
+            "args": ["{url}", "mixed"]
+        },
+        "taskNamesTheoretical": {
+            "filename": "g\\GetTasks\\FIKS",
+            "func": "load_new_tasks_categorized",
+            "args": ["{url}", "theoretical"]
+        },
+        "tasksAndPackageNamesPractical": {
             "filename": "g\\Utility\\nameTools",
             "func": "beautify_to_pair",
-            "args": ["${taskNames}"]
+            "args": ["${taskNamesPractical}"]
+        },
+        "tasksAndPackageNamesMixed": {
+            "filename": "g\\Utility\\nameTools",
+            "func": "beautify_to_pair",
+            "args": ["${taskNamesMixed}"]
         }
     },
     "dir": {
         "{kolo}. kolo": {
-            "task": "${tasksAndPackageNames}"
+            "practicalTask": "${tasksAndPackageNamesPractical}",
+            "mixedTask": "${tasksAndPackageNamesMixed}",
+            "theoreticalTask": "${taskNamesTheoretical}"
         }
     },
     "templates": {
-        "task": {
+        "practicalTask": {
             "args": ["taskName", "packageName"],
             "dir": {
                 "{taskName}": {
-                    "Cargo.toml": "{cargo1}{packageName}{cargo2}",
-                    "src": {
-                        "{taskFileName}.{fileType}":  "{rust}"
-                    }
+                    "program": ["{packageName}"]
                 }
+            }
+        },
+        "mixedTask": {
+            "args": ["taskName", "packageName"],
+            "dir": {
+                "{taskName}": {
+                    "program": ["{packageName}"],
+                    "description": ["{taskName}"]
+                }
+            }
+        },
+        "theoreticalTask": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "description": ["{taskName}"]
+                }
+            }
+        },
+        "program": {
+            "args": ["packageName"],
+            "dir": {
+                "Cargo.toml": "{cargo1}{packageName}{cargo2}",
+                "src": {
+                    "{taskFileName}.{fileType}":  "{rust}"
+                }
+            }
+        },
+        "description":
+        {
+            "args": ["taskName"],
+            "dir": {
+                "{descriptionFileName}.{descriptionFileType}":  "{tex01}{taskName}{tex02}{author}{tex03}"
             }
         }
     }
