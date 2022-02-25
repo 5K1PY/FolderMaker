@@ -237,6 +237,9 @@ class FolderMaker:
                 if (isinstance(value, str) and value[0] == "$"):
                     value = self.load_content(value)
 
+                if value == []:
+                    self.make_directory(path=path, directory=template["dir"])
+
                 for args in value:
                     if isinstance(args, str):
                         local_variables = {template["args"][0]: self.load_content(args)}
