@@ -1,0 +1,77 @@
+{
+    "variables": {
+        "author": "Insert your name here.",
+
+        "programFileName": "Program",
+        "programFileType": "py",
+        "descriptionFileName": "Popis",
+        "descriptionFileType": "tex",
+
+        "base_url" : "https://ksp.mff.cuni.cz/z/ulohy/"
+    },
+    "fileVariables": {
+        "programContent": "g\\Py\\Basic.py",
+        "tex01": "g\\Tex\\01 start-title.txt",
+        "tex02": "g\\Tex\\02 title-author.txt",
+        "tex03": "g\\Tex\\03 author-end.txt"
+    },
+    "scriptVariables": {
+        "taskNamesPractical": {
+            "filename": "g\\GetTasks\\KSP",
+            "func": "load_tasks_categorized",
+            "args": ["{base_url}", "practical"]
+        },
+        "taskNamesTheoretical": {
+            "filename": "g\\GetTasks\\KSP",
+            "func": "load_tasks_categorized",
+            "args": ["{base_url}", "theoretical"]
+        },
+        "taskNamesSerial": {
+            "filename": "g\\GetTasks\\KSP",
+            "func": "load_tasks_categorized",
+            "args": ["{base_url}", "serial"]
+        }
+    },
+    "dir": {
+        "practicalTask": "${taskNamesPractical}",
+        "theoreticalTask": "${taskNamesTheoretical}",
+        "serialTask": "${taskNamesSerial}"
+    },
+    "templates": {
+        "practicalTask": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "program": [[]]
+                }
+            }
+        },
+        "theoreticalTask": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "description": ["{taskName}"]
+                }
+            }
+        },
+        "serialTask": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {}
+            }
+        },
+
+        "program": {
+            "dir": {
+                "{programFileName}.{programFileType}":  "{programContent}"
+            }
+        },
+        "description":
+        {
+            "args": ["taskName"],
+            "dir": {
+                "{descriptionFileName}.{descriptionFileType}":  "{tex01}{taskName}{tex02}{author}{tex03}"
+            }
+        }
+    }
+}
