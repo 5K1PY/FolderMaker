@@ -1,0 +1,89 @@
+{
+    "variables": {
+        "author": "Insert your name here.",
+
+        "programFileName": "main",
+        "programFileType": "rs",
+        "descriptionFileName": "Popis",
+        "descriptionFileType": "tex",
+
+        "base_url" : "https://ksp.mff.cuni.cz/h/ulohy/"
+    },
+    "fileVariables": {
+        "rust": "g\\Rust\\main.rs",
+        "cargo1": "g\\Rust\\Cargo1.toml",
+        "cargo2": "g\\Rust\\Cargo2.toml",
+
+        "tex01": "g\\Tex\\01 start-title.txt",
+        "tex02": "g\\Tex\\02 title-author.txt",
+        "tex03": "g\\Tex\\03 author-end.txt"
+    },
+    "scriptVariables": {
+        "taskNamesPractical": {
+            "filename": "g\\GetTasks\\KSP",
+            "func": "load_tasks_categorized",
+            "args": ["{base_url}", "practical"]
+        },
+        "taskNamesTheoretical": {
+            "filename": "g\\GetTasks\\KSP",
+            "func": "load_tasks_categorized",
+            "args": ["{base_url}", "theoretical"]
+        },
+        "taskNamesSerial": {
+            "filename": "g\\GetTasks\\KSP",
+            "func": "load_tasks_categorized",
+            "args": ["{base_url}", "serial"]
+        },
+        "taskAndPackageNamesPractical": {
+            "filename": "g\\Utility\\nameTools",
+            "func": "beautify_to_pair",
+            "args": ["${taskNamesPractical}"]
+        }
+    },
+    "dir": {
+        "practicalTask": "${taskAndPackageNamesPractical}",
+        "theoreticalTask": "${taskNamesTheoretical}",
+        "serialTask": "${taskNamesSerial}"
+    },
+    "templates": {
+        "practicalTask": {
+            "args": ["taskName", "packageName"],
+            "dir": {
+                "{taskName}": {
+                    "program": ["{packageName}"]
+                }
+            }
+        },
+        "theoreticalTask": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "description": ["{taskName}"]
+                }
+            }
+        },
+        "serialTask": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {}
+            }
+        },
+
+        "program": {
+            "args": ["packageName"],
+            "dir": {
+                "Cargo.toml": "{cargo1}{packageName}{cargo2}",
+                "src": {
+                    "{programFileName}.{programFileType}":  "{rust}"
+                }
+            }
+        },
+        "description":
+        {
+            "args": ["taskName"],
+            "dir": {
+                "{descriptionFileName}.{descriptionFileType}":  "{tex01}{taskName}{tex02}{author}{tex03}"
+            }
+        }
+    }
+}
