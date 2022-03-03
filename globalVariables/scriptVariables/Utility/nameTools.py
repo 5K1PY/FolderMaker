@@ -33,6 +33,10 @@ def beautify_to_pair(tasks):
     return list(map(lambda x: (x, beautify_one(x)), tasks))
 
 
+def beautify_first(tasks):
+    return [(task[0], beautify_one(task[0])) + task[1:] for task in tasks]
+
+
 if __name__ == "__main__":
     tasks = ["1 Pěnkavy", "2 Sloni", "3 Ryby"]
     print(beautify(tasks))

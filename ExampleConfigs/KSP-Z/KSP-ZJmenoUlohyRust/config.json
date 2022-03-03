@@ -19,9 +19,9 @@
         "tex03": "g\\Tex\\03 author-end.txt"
     },
     "scriptVariables": {
-        "taskNamesPractical": {
+        "taskNamesAndInputsPractical": {
             "filename": "g\\GetTasks\\KSP",
-            "func": "load_tasks_categorized",
+            "func": "load_tasks_with_examples",
             "args": ["{base_url}", "practical"]
         },
         "taskNamesTheoretical": {
@@ -34,23 +34,25 @@
             "func": "load_tasks_categorized",
             "args": ["{base_url}", "serial"]
         },
-        "taskAndPackageNamesPractical": {
+        "taskInputAndPackageNamesPractical": {
             "filename": "g\\Utility\\nameTools",
-            "func": "beautify_to_pair",
-            "args": ["${taskNamesPractical}"]
+            "func": "beautify_first",
+            "args": ["${taskNamesAndInputsPractical}"]
         }
     },
     "dir": {
-        "practicalTask": "${taskAndPackageNamesPractical}",
+        "practicalTask": "${taskInputAndPackageNamesPractical}",
         "theoreticalTask": "${taskNamesTheoretical}",
         "serialTask": "${taskNamesSerial}"
     },
     "templates": {
         "practicalTask": {
-            "args": ["taskName", "packageName"],
+            "args": ["taskName", "packageName", "input", "output"],
             "dir": {
                 "{taskName}": {
-                    "program": ["{packageName}"]
+                    "program": ["{packageName}"],
+                    "00.in": "{input}",
+                    "00c.out": "{output}"
                 }
             }
         },

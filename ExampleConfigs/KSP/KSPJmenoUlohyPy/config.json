@@ -16,9 +16,9 @@
         "tex03": "g\\Tex\\03 author-end.txt"
     },
     "scriptVariables": {
-        "taskNamesPractical": {
+        "taskNamesAndInputsPractical": {
             "filename": "g\\GetTasks\\KSP",
-            "func": "load_tasks_categorized",
+            "func": "load_tasks_with_examples",
             "args": ["{base_url}", "practical"]
         },
         "taskNamesTheoretical": {
@@ -33,16 +33,18 @@
         }
     },
     "dir": {
-        "practicalTask": "${taskNamesPractical}",
+        "practicalTask": "${taskNamesAndInputsPractical}",
         "theoreticalTask": "${taskNamesTheoretical}",
         "serialTask": "${taskNamesSerial}"
     },
     "templates": {
         "practicalTask": {
-            "args": ["taskName"],
+            "args": ["taskName", "input", "output"],
             "dir": {
                 "{taskName}": {
-                    "program": [[]]
+                    "program": [[]],
+                    "00.in": "{input}",
+                    "00c.out": "{output}"
                 }
             }
         },

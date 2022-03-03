@@ -76,6 +76,38 @@ def load_tasks_categorized(base_url, category):
     return get_names(categorize(autoload(base_url), category))
 
 
+def load_tasks_with_examples(base_url, category):
+    url = get_newest_url(base_url)
+    soup = get_page_soup(url)
+    tasks_names = get_names(categorize(load(url), category))
+    task_inputs = {}
+    task_outputs = {}
+    for headline in soup.find_all("h3"):
+        task_name = get_task_name(headline.text)
+        if task_name not in tasks_names:
+            continue
+        el = headline.next_sibling
+        while el.name != "h3":
+            if el.name == "div":
+                description = el.find("i")
+                if description is not None:
+                    if description.text == "Ukázkový vstup:":
+                        task_inputs[task_name] = el.find("pre").text.strip()
+                    if description.text == "Ukázkový výstup:":
+                        task_outputs[task_name] = el.find("pre").text.strip()
+
+            el = el.next_sibling
+
+    grouped = []
+    for task_name in tasks_names:
+        if task_name not in task_inputs:
+            task_inputs[task_name] = ""
+        if task_name not in task_outputs:
+            task_outputs[task_name] = ""
+        grouped.append((task_name, task_inputs[task_name], task_outputs[task_name]))
+    return grouped
+
+
 if __name__ == "__main__":
     base_url = "https://ksp.mff.cuni.cz/h/ulohy/"
     print(get_newest_url(base_url))
@@ -84,3 +116,4 @@ if __name__ == "__main__":
     for category in ("practical", "theoretical", "serial"):
         print(category)
         print("\t", load_tasks_categorized(base_url, category))
+    print(load_tasks_with_examples(base_url, "practical"))
