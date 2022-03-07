@@ -1,13 +1,20 @@
 {
     "variables": {
-        "level": "3",
-        "taskFileName": "Program",
-        "fileType": "cpp",
+        "author": "Insert your name here.",
+        "level": "Insert your level here",
+
+        "programFileName": "Program",
+        "programFileType": "cpp",
+        "descriptionFileName": "Popis",
+        "descriptionFileType": "tex",
 
         "url" : "https://www.ksp.sk/ulohy/"
     },
     "fileVariables": {
-        "fileContent": "g\\Cpp\\Basic.cpp"
+        "programContent": "g\\Cpp\\Basic.cpp",
+        "tex01": "g\\Tex\\01 start-title.txt",
+        "tex02": "g\\Tex\\02 title-author.txt",
+        "tex03": "g\\Tex\\03 author-end.txt"
     },
     "scriptVariables": {
         "kolo": {
@@ -31,7 +38,8 @@
             "args": ["taskName"],
             "dir": {
                 "{taskName}": {
-                    "{taskFileName}.{fileType}":  "{fileContent}"
+                    "{programFileName}.{programFileType}":  "{programContent}",
+                    "{descriptionFileName}.{descriptionFileType}":  "{tex01}{taskName}{tex02}{author}{tex03}"
                 }
             }
         }

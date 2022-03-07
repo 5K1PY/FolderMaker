@@ -27,7 +27,11 @@ def load_all_tasks(url):
 
 
 def load_suitable_tasks(url, level):
-    level = int(level)
+    try:
+        level = int(level)
+    except ValueError:
+        print(f"KSP-SK level is not a number: {level}")
+        return []
     return load(url)[level-1:level+4]
 
 
