@@ -54,29 +54,35 @@ Variables can be three types:
 Basic variables are included in `config.json` and their string form is automatically evaluated before file creation.
 
 Syntax:
-1. `"variables": {`
-2. `    "variable1": "foo",`
-3. `    "variable2": "not {variable1}"`
-4. `}`
+```
+"variables": {
+    "variable1": "foo",
+    "variable2": "not {variable1}"
+}
+```
 ### File variables
 File variables are loaded from `./fileVariables` folder. This option is designed in order to reduce `config.json` text with limited functionality. Beware: File variables are **not** evaluated!
 
 Syntax:
-1. `"fileVariables": {`
-2. `    "variable": "file1.txt"`
-3. `}`
+```
+"fileVariables": {
+    "variable": "file1.txt"
+}
+```
 
 ### Script variables
 Script variables are python programs, that are given thier arguments and variable contents are the results they return. Arguments of scripts are automatically evaluated, whilist their results are not.
 
 Syntax:
-1. `"scriptVariables": {`
-2. `    "variable": {`
-3. `        "filename": "GetVar", // name of python script`
-4. `        "func": "foo",  // function to call`
-5. `        "args": ["arg1", "{variable1}"]  // function arguments`
-6. `    }`
-7. `}`
+```
+"scriptVariables": {
+    "variable": {
+        "filename": "GetVar", // name of python script
+        "func": "foo",  // function to call
+        "args": ["arg1", "{variable1}"]  // function arguments
+    }
+}
+```
 
 Use script variables when you can't get something by normal varibles e.g. loading data from web or getting lowest available folder name
 
@@ -88,19 +94,25 @@ Special variables are not defined by the user, but are defined by the program. T
 ## Global File and Script variables
 To reduce unneccessary duplication of files, it is possible to use files from `globalVariables` folder. To do so, add `"g\\"` before
 path to the file you would like to use, for example:
-1. `"fileVariables": {`
-2. `    "variable": "g\\folder\\file1.txt"`
-3. `}`
+```
+"fileVariables": {
+    "variable": "g\\folder\\file1.txt"
+}
+```
+
 Which loads form `\\globalVariables\\fileVariables\\folder\\file1.txt`.
 
 For Script variables:
-1. `"scriptVariables": {`
-2. `    "variable": {`
-3. `        "filename": "g\\folder\\GetVar",`
-4. `        "func": "foo",`
-5. `        "args": ["arg1", "{variable1}"]`
-6. `    }`
-7. `}`
+```
+"scriptVariables": {
+    "variable": {
+        "filename": "g\\folder\\GetVar",
+        "func": "foo",
+        "args": ["arg1", "{variable1}"]
+    }
+}
+```
+
 Which uses script from `\\globalVariables\\scriptVariables\\folder\\GetVar.py`.
 
 **Warning:** If you have same name of script file in `scriptVariables` and one of the `globalVariables` folders (e. g. `getVar` and `g\\folder\\GetVar`) the one from `scriptVariables` will be used.
@@ -127,19 +139,23 @@ Global file variables are divided into following folders:
 Templates are folder/file recipts to reduce lenght of `dir`. They are defined in `templates` dictionary. They have similar syntax to `dir` dictionary, but can have local variables, that are given as arguments, but can use global variables as well.
 
 Syntax:
-1. `"template1": {`
-2. `    "arguments": ["folderName", "fileName"],`
-3. `    "dir": {`
-4. `        "{folderName}": {`
-5. `            "{fileName}.{fileType}":  "example1"`
-6. `        }`
-7. `    }`
-8. `}`
+```
+"template1": {
+    "arguments": ["folderName", "fileName"],
+    "dir": {
+        "{folderName}": {
+            "{fileName}.{fileType}":  "example1"
+        }
+    }
+}
+```
 
 (Here fileType is a global variable)
 When using templates in `dir` dictionary use template name as key and list or string that evaluates to list as arguments: \
-1. `"dir"`: {`
-2. `    "folder1": {`
-3. `        "template1": ["1", "{var1}"]`
-4. `    }`
-5. `}`
+```
+"dir"`: {
+    "folder1": {
+        "template1": ["1", "{var1}"]
+    }
+}
+```
