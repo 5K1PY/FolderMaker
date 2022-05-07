@@ -130,6 +130,7 @@ Global file variables are divided into following folders:
    - findLowestFree - finds next free name for folder of given reg-ex
    - nameTools - various tools for working with names of tasks
  - GetTasks - These scripts load tasks from respective competition:
+   - KSP
    - FIKS
    - Fykos
    - KSP-SK
