@@ -1,17 +1,17 @@
 {
     "variables": {
         "author": "Insert your name here.",
-        "level": "Insert your level here",
+        "level": "Insert your level here.",
 
         "programFileName": "Program",
-        "programFileType": "cpp",
+        "programFileType": "py",
         "descriptionFileName": "Popis",
         "descriptionFileType": "tex",
 
         "url" : "https://www.ksp.sk/ulohy/"
     },
     "fileVariables": {
-        "programContent": "g\\Cpp\\Basic.cpp",
+        "programContent": "g\\Py\\Basic.py",
         "tex01": "g\\Tex\\01 start-title.txt",
         "tex02": "g\\Tex\\02 title-author.txt",
         "tex03": "g\\Tex\\03 author-end.txt"

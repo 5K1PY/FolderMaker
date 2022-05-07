@@ -1,0 +1,47 @@
+{
+    "variables": {
+        "author": "Insert your name here.",
+        "level": "Insert your level here.",
+
+        "programFileName": "Program",
+        "programFileType": "cpp",
+        "descriptionFileName": "Popis",
+        "descriptionFileType": "tex",
+
+        "url" : "https://www.ksp.sk/ulohy/"
+    },
+    "fileVariables": {
+        "programContent": "g\\Cpp\\Basic.cpp",
+        "tex01": "g\\Tex\\01 start-title.txt",
+        "tex02": "g\\Tex\\02 title-author.txt",
+        "tex03": "g\\Tex\\03 author-end.txt"
+    },
+    "scriptVariables": {
+        "kolo": {
+            "filename": "g\\Utility\\findNextFree",
+            "func": "load",
+            "args": ["{\\path}", "(\\d+)\\. kolo"]
+        },
+        "taskNames": {
+            "filename": "g\\GetTasks\\KSP-SK",
+            "func": "load_suitable_tasks",
+            "args": ["{url}", "{level}"]
+        }
+    },
+    "dir": {
+        "{kolo}. kolo": {
+            "task": "${taskNames}"
+        }
+    },
+    "templates": {
+        "task": {
+            "args": ["taskName"],
+            "dir": {
+                "{taskName}": {
+                    "{programFileName}.{programFileType}":  "{programContent}",
+                    "{descriptionFileName}.{descriptionFileType}":  "{tex01}{taskName}{tex02}{author}{tex03}"
+                }
+            }
+        }
+    }
+}
